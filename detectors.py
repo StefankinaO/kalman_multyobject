@@ -106,6 +106,7 @@ class Detectors(object):
         blob_radius_thresh = 8
         # Find centroid for each valid contours
         for cnt in contours:
+            print("contours", cnt)
             try:
                 # Calculate and draw circle
                 (x, y), radius = cv2.minEnclosingCircle(cnt)
@@ -148,20 +149,24 @@ class Detectors(object):
             itog = []
 
         centers = []
-        k = 0
-        X = []
-        Y = []
-        z = 0
+        blob_radius_thresh = 8
         print(len(res))
+        #[ymin, xmin, ymax, xmax] where the image coordinates:
+
+        #(left, right, top, bottom) = (xmin * im_width, xmax * im_width,
+                              #ymin * im_height, ymax * im_height)
         for i in range(len(res)):
             for j in range(len(res[0]) - 3):
-                #[ymin, xmin, ymax, xmax]
-                #(x1 + (x2 - x1) / 2, y2 + (y1 - y2) / 2)
-                (x, y) = (res[i][1 + j] + (res[i][3 +j] - res[i][1 + j]) / 2, res[i][0+j] + (res[i][0+j] - res[i][2 +j]) / 2)#((res[i][1 + j] - res[i][0 + j]) ** 2 + (res[i][1 + j] - res[i][3 + j])**2)/2, ((res[i][1 + j] - res[i][0 + j]) ** 2 +(res[i][1 + j] - res[i][3 + j])**2)/2
-            #(x, y) = (((i[1 + k] - i[3 + k]) ** 2 + (i[2 + k] - i[3 + k]) ** 2) / 2 * 16), (
-                        #((i[1 + k] - i[3 + k]) ** 2 + (i[2 + k] - i[3 + k]) ** 2) / 2 * 16)
-            #k += 4
-            #z+= 1
-            b = np.array([[x], [y]])
-            centers.append(np.round(b))
+                cnt = [[[int(res[i][1 + j]), int(res[i][0+j])]],
+                       [[int(res[i][j+3]), int(res[i][j + 2])]]]#,
+                       #[[int(res[i + 1][j]), int(res[i][j])]], [[int(res[i][j]), int(res[i][i])]]]
+                print(np.array(cnt))
+                (x, y), radius = cv2.minEnclosingCircle(np.array(cnt))
+                centeroid = (int(x), int(y))
+                radius = int(radius)
+                if (radius > blob_radius_thresh):
+                    cv2.circle(frame, centeroid, radius, (0, 255, 0), 2)
+                    b = np.array([[x], [y]])
+                    centers.append(np.round(b))
+        cv2.imshow('Track Bugs', frame)
         return centers
