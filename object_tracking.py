@@ -64,15 +64,7 @@ def main():
 
         # If centroids are detected then track them
         if (len(centers) > 0):
-            '''for i in range(len(centers)):
-                            for j in range(0, len(centers[i])- 3, 3):
-                                print(centers[i][j])
-                                x1, y1, x2, y2 = centers[i][0 + j], centers[i][1 + j], centers[i][2 + j], centers[i][3 + j]
-                                cv2.line(frame, (int(x1), int(y1)), (int(x2), int(y2)),
-                                 (0, 255, 0), 2)
-                        print(int(x1), int(y1), int(x2), int(y2))
-                    # Display the resulting tracking frame
-                    cv2.imshow('Tracking', frame)'''
+
             # Track object using Kalman Filter
             tracker.Update(centers)
 
@@ -80,16 +72,16 @@ def main():
             # Use various colors to indicate different track_id
             for i in range(len(tracker.tracks)):
                 if (len(tracker.tracks[i].trace) > 1):
-                    for j in range(len(tracker.tracks[i].trace)-1):
+                    for j in range(len(tracker.tracks[i].trace) - 1):
                         # Draw trace line
                         x1 = tracker.tracks[i].trace[j][0][0]
                         y1 = tracker.tracks[i].trace[j][1][0]
-                        x2 = tracker.tracks[i].trace[j+1][0][0]
-                        y2 = tracker.tracks[i].trace[j+1][1][0]
+                        x2 = tracker.tracks[i].trace[j + 1][0][0]
+                        y2 = tracker.tracks[i].trace[j + 1][1][0]
                         clr = tracker.tracks[i].track_id % 9
                         cv2.line(frame, (int(x1), int(y1)), (int(x2), int(y2)),
                                  track_colors[clr], 2)
-                        print(int(x1), int(y1), int(x2), int(y2))
+
             # Display the resulting tracking frame
             cv2.imshow('Tracking', frame)
 
@@ -115,7 +107,7 @@ def main():
                         print("Resume code..!!")
                         break
 
-    # When everything done, release the capture
+        # When everything done, release the capture
     cap.release()
     cv2.destroyAllWindows()
 
